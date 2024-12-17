@@ -14,16 +14,27 @@ public class Receiver extends Thread {
 
     @Override
     public void run() {
+        String message = null;
         try {
             while (true) {
 
-                String message = messageBox.take();
-                System.out.printf("Thread: %s, message: %s\n", getName(), message);
+              message   = messageBox.take();
+                process(message);
 
             }
         } catch (InterruptedException e) {
-            // will exit from the cycle by interrupt
-        }
+           do {
+            message = messageBox.poll();
+            if(message != null) {
+                process(message);
+            }
+           }
+         while(message != null);
+    }
+}
+
+    private void process(String message) {
+        System.out.printf("Thread: %s, message: %s\n", getName(), message);
     }
 
 }
